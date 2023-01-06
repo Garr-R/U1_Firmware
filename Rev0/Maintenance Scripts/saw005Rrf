@@ -1,0 +1,118 @@
+; Sawtooth XY offset calibration exported: 19:26 02/15/2019
+; Axis under test: X
+; Pattern spacing: 0.05
+{% set tohome = parameters.tohome %}
+{% set printOffset = 34.9 + parameters.offset %}
+{% set targetBed = parameters.targetBed %}
+{% set targetT0 = parameters.targetT0 %}
+{% set targetT1 = parameters.targetT1 %}
+{% set toHeat = parameters.toHeat %}
+{% if toHeat == true %}
+M104 T0 S{{targetT0}}
+M104 T1 S{{targetT1}}
+M140 S{{targetBed}}
+M140 P0 S{{targetBed}}
+M140 P1 S{{targetBed+2}}
+M140 P2 S{{targetBed+4}}
+M140 P3 S{{targetBed+4}}
+M109 T0 S{{targetT0}}
+M109 T1 S{{targetT1}}
+M190 S{{targetBed}}
+M190 P0 S{{targetBed}}
+M190 P1 S{{targetBed+2}}
+M190 P2 S{{targetBed+4}}
+M190 P3 S{{targetBed+4}}
+{% endif %}
+
+
+
+
+{% if tohome == true %}
+G28 XY
+G28 Z
+G32
+G28 Z
+;G29
+T0
+{% endif %}
+
+T0
+G92 E0
+G1 F1000 X25 Y84.5 Z2
+G1 Z0.25
+G1 F1000 X25 Y134.5 E10
+G92 E0
+M83
+G1 F500 X25 Y134.5 E0
+G1 F500 X35 Y150 E1.0145
+G1 F500 X35 Y134.5 E0.8525
+G1 F500 X45 Y134.5 E0.55
+G1 F500 X55 Y150 E1.0145
+G1 F500 X55 Y134.5 E0.8525
+G1 F500 X65 Y134.5 E0.55
+G1 F500 X75 Y150 E1.0145
+G1 F500 X75 Y134.5 E0.8525
+G1 F500 X85 Y134.5 E0.55
+G1 F500 X95 Y150 E1.0145
+G1 F500 X95 Y134.5 E0.8525
+G1 F500 X105 Y134.5 E0.55
+G1 F500 X115 Y150 E1.0145
+G1 F500 X115 Y134.5 E0.8525
+G92 E0
+G1 F1000 X25 Y134.5 E45
+G1 F1000 Z10
+G1 F2000 X-25
+G92 E0
+G1 F300 E-5
+G92 E0
+T1
+G1 F1000 X{{printOffset}} Y215.5 Z2
+G1 Z0.25
+G1 F1000 X{{printOffset}} Y165.5 E10
+G92 E0
+G91
+M83
+G1 F500 X0 Y0 E0
+G1 F500 X0 Y-15 E0.825
+G1 F500 X10 Y15 E0.9915
+G1 F500 X10.05 Y0 E0.5528
+G1 F500 X0 Y-15 E0.825
+G1 F500 X10 Y15 E0.9915
+G1 F500 X10.05 Y0 E0.5528
+G1 F500 X0 Y-15 E0.825
+G1 F500 X10 Y15 E0.9915
+G1 F500 X10.05 Y0 E0.5528
+G1 F500 X0 Y-15 E0.825
+G1 F500 X10 Y15 E0.9915
+G1 F500 X10.05 Y0 E0.5528
+G1 F500 X0 Y-15 E0.825
+G1 F500 X10 Y15 E0.9915
+G90
+M82
+G92 E0
+G1 F1000 X34.9 Y165.5 E45
+G1 F1000 X250 Y240 Z90
+
+
+
+; Dual XY Calibration Generator, RRF Sawtooth-Bins sheet, parameters:
+; Center line (Y),150
+; Center Gap,0.5
+; Pattern Height,15
+; Pattern Spacing on Centers (X),20
+; Pattern Center (X),75
+; Bin Width (X),1
+; Bin Wall Base Width (X),5
+; Sawtooth Base Width (X),10
+; B Pattern Offset from Center (X),0.05
+; A Feedrate,500
+; B Feedrate,500
+; EXT coefficient (mm to extrude per linear mm),0.055
+; B relative,TRUE
+; A relative extrusion,TRUE
+; A baseline,134.5
+; A Pattern Top,150
+; B Baseline,165.5
+; B Pattern Bottom,150.5
+; First axis,X
+; Second axis,Y
