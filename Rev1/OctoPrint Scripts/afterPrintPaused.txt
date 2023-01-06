@@ -1,0 +1,15 @@
+;START FILAMENT OUT U1V3.1
+	{% if pause_position.x is not none %} 
+		G91 ;relative XYZ 
+		;M83 ;relative extrusion
+		G1 Z10 F4500 ; move Z 'upwards'  
+		
+		;M82 ; absolute Extrusion 
+		G90 ; absolute XYZ  
+		G1 X-25 Y20 ; move to a safe rest position, valid for T0 or T1
+
+		M104 T0 S0	;Turn T0 heater off
+		M104 T1 S0	;Turn T1 heater off
+		M104 T2 S0 ; Turn T2 heater off - Josh, 8/14/2020, trying to fix wrong tool heatup on filament pause recovery
+	{% endif %} 
+;END FILAMENT OUT U1V3.1
