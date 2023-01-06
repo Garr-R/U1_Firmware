@@ -1,0 +1,55 @@
+; START FILAMENT OUT U1V3.3.7
+; Modifications for duplication mode printing by Josh, 8/10/2020
+; Changed to M116 for heatup, Josh, 8/13/2020
+; Adjusted how temperatures are set - manually target tools 0 and 1, instead of iterating through extruder count, to prevent setting T2 and thus both tools... - Josh, 9/10/2020
+; Second modification, added a block specifically for testing if pause tool was 2 - Josh, 9/10/2020
+; Change resume feedrate to a unique value for easy tracking - Josh, 9/11/2020
+{% if pause_position.x is not none %}
+
+	; Set temperatures with M104
+	{% for tool in [0, 1] %}
+		{% if pause_temperature[tool] and pause_temperature[tool]['target'] is not none %}
+			M104 T{{ tool }} S{{ pause_temperature[tool]['target'] }}
+		{% else %}
+			M118 S"//action:pause"
+			M118 S"Tool temperatures were not correctly stored. Please contact support."
+		{% endif %}
+	{% endfor %}
+
+	{% if pause_position.t and pause_position.t == 2 %}
+		{% if pause_temperature[2]['target'] is not none %}
+			M104 T2 S{{ pause_temperature[2]['target'] }}
+		{% else %}
+			M118 S"//action:pause"
+			M118 S"Tool temperatures were not correctly stored. Please contact support."
+		{% endif %}
+	{% endif %}
+	
+
+	; Wait for the temperature of the new tool to stabilize.  Using M116 Pn now to wait for that specific tool.
+	M116 P{{ pause_position.t }}
+
+	M83 ; Relative extruder mode
+
+	G1 E1 F4500 ; Prime nozzle
+
+	M82 ; Absolute extruder mode
+
+	G90 ; Absolute XYZ
+
+	G92 E{{ pause_position.e }} ; Set extruder to position from before pause
+
+	; Use M83 or M82(extruder absolute mode) according what your slicer generates 
+	M82 ; Absolute extruder mode
+
+	T{{ pause_position.t }} ; Switch to the last active tool - Josh, 8/10/2020
+	G1 X{{ pause_position.x }} Y{{ pause_position.y }} F4513 ; Move back to pause position XY
+
+	G1 Z{{ pause_position.z }} F4500 ; Move back to pause position Z
+
+	; Reset to previous feedrate from before pause if available
+	{% if pause_position.f is not none %}
+		G1 F{{ pause_position.f }}
+	{% endif %}
+{% endif %}
+; END FILAMENT OUT U1V3.3.7
